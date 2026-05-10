@@ -1,11 +1,12 @@
 import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
+
 import { getPayload } from 'payload'
-import React from 'react'
+
 import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import './styles.css'
+import Home from '@/components/Home'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -18,15 +19,6 @@ export default async function HomePage() {
   return (
     <div className="home">
       <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/3.x/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
         {!user && <h1>Welcome to your new project.</h1>}
         {user && <h1>Welcome back, {user.email}</h1>}
         <div className="bg-red-500 text-white p-4 rounded">This is a red box with white text.</div>
@@ -49,6 +41,8 @@ export default async function HomePage() {
           </a>
         </div>
       </div>
+
+      <Home />
       <div className="footer">
         <p>Update this page by editing</p>
         <a className="codeLink" href={fileURL}>

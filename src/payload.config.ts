@@ -5,8 +5,11 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { books } from './data/books'
+
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Books } from './collections/Books'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Books],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -31,4 +34,30 @@ export default buildConfig({
   }),
   sharp,
   plugins: [],
+  onInit: async (payload) => {
+    const result = await payload.find({ collection: 'books', limit: 1 })
+
+    if (result.totalDocs === 0) {
+      payload.logger.info(`Seeder ${books.length} bøker...`)
+
+      for (const book of books) {
+        await payload.create({
+          collection: 'books',
+          data: {
+            title: book.title,
+            author: book.author,
+            price: book.price,
+            isbn: book.isbn,
+            publishedYear: book.publishedYear,
+            image: null,
+            category: book.category,
+            inStock: book.inStock,
+            description: book.description,
+          },
+        })
+      }
+
+      payload.logger.info('Ferdig! Bøker er i databasen.')
+    }
+  },
 })
